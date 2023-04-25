@@ -57,6 +57,7 @@ CREATE TABLE invoice(
 	invoice_date_time VARCHAR(150)
 );
 
+
 -- Inserting data into tables for Austin buying a new car
 
 INSERT INTO customer(customer_id, first_name, last_name)
@@ -82,8 +83,41 @@ VALUES(2, 'Nissan', 'Leaf', 2018);
 INSERT INTO mechanic(mechanic_id, first_name, last_name)
 VALUES(1, 'Connie', 'Speer');
 
-INSERT INTO service_ticket(serviceticket_id, customer_id, carserial_id, mechanic_id, service_timestamp, part_id)
-VALUES(1, 2, 2, 1, now(), NULL);
+INSERT INTO service_ticket(serviceticket_id, customer_id, carserial_id, mechanic_id, service_timestamp, service_type, part_id)
+VALUES(1, 2, 2, 1, now(), 'oil change', NULL);
 
 INSERT INTO invoice(invoice_id, customer_id, salesperson_id, carserial_id, serviceticket_id, invoice_date_time)
 VALUES(2, 2, 1, 2, 1, now());
+
+-- Creating function to add customer
+
+CREATE OR REPLACE FUNCTION add_customer(_customer_id INTEGER, _first_name VARCHAR, _last_name VARCHAR)
+RETURNS void
+AS $main$
+BEGIN
+	INSERT INTO customer(customer_id, first_name, last_name)
+	values(_customer_id, _first_name, _last_name);
+END;
+$main$
+LANGUAGE plpgsql;
+
+-- Creating function to add car
+
+CREATE OR REPLACE FUNCTION add_car(_carserial_id INTEGER, _make VARCHAR, _model VARCHAR, _year_ INTEGER)
+RETURNS void
+AS $main$
+BEGIN
+	INSERT INTO car(carserial_id, make, model, _year)
+	values(_carserial_id, _make, _model, _year_);
+END;
+$main$
+LANGUAGE plpgsql;
+
+-- Calling functions
+
+SELECT add_customer(3, 'Galen', 'Wangberg');
+
+SELECT add_car(3, 'Toyota', 'Tacoma', 2023);
+
+INSERT INTO invoice(invoice_id, customer_id, salesperson_id, carserial_id, serviceticket_id, invoice_date_time)
+VALUES(3, 3, 1, 3, NULL, now());
